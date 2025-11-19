@@ -3,7 +3,7 @@
 A simple and convenient CLI tool for **batch-converting audio files** using `ffmpeg`.
 
 It provides an easy interface for converting whole folders of audio, optionally handling recursion,
-archiving originals, overwriting, quiet mode, and saving your default folder configuration for quick reuse.
+archiving originals, overwriting, and saving your default folder configuration for quick reuse.
 
 This tool does *not* replace FFmpeg — it makes frequent batch workflows much easier.
 
