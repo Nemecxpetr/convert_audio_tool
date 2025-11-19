@@ -1,0 +1,12 @@
+[project]
+name = "convert-audio-tool"
+version = "0.1.0"
+description = "Simple CLI tool to batch-convert audio using ffmpeg."
+authors = [
+    { name = "Petr Němec" }
+]
+readme = "README.md"
+requires-python = ">=3.8"
+
+[project.scripts]
+convert-audio = "convert_audio_tool:main"
