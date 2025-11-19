@@ -201,5 +201,7 @@ https://ffmpeg.org/legal.html
 `convert-audio-tool` is not affiliated with the FFmpeg project.
 
 ## License
-
-This project uses a separate LICENSE file included in the repository.
+```
+MIT License  
+Copyright (c) 2025 Petr Němec
+```
