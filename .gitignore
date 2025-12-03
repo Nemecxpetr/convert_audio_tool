@@ -51,6 +51,21 @@ pytest_cache/
 Thumbs.db
 
 # -------------------------
+# Big sample / output files
+# -------------------------
+# ignore generated outputs
+samples/output/**
+
+# ignore temporary or large files
+samples/**/*.tmp
+samples/**/*.bak
+samples/**/*.mp4
+samples/**/*.wav
+
+# keep sample input files if they are small and meaningful
+!samples/input/**
+
+# -------------------------
 # Your tool’s user config
 # (avoid committing user-specific config!)
 # -------------------------
