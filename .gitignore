@@ -1,9 +1,58 @@
-build/lib/convert_audio_tool.py
-src/convert_audio_tool.egg-info/dependency_links.txt
-src/convert_audio_tool.egg-info/entry_points.txt
-src/convert_audio_tool.egg-info/PKG-INFO
-src/convert_audio_tool.egg-info/SOURCES.txt
-src/convert_audio_tool.egg-info/top_level.txt
-samples/input/video/*
-samples/output/mp4_out/*
-samples/output/wav_out/*    
+# -------------------------
+# Python bytecode & cache
+# -------------------------
+__pycache__/
+*.py[cod]
+*$py.class
+
+# -------------------------
+# Virtual environments
+# -------------------------
+.venv/
+venv/
+env/
+ENV/
+
+# -------------------------
+# Build / packaging
+# -------------------------
+build/
+dist/
+*.egg-info/
+*.egg
+
+# setuptools editable backups
+src/convert_audio_tool.egg-info/
+
+# -------------------------
+# PyInstaller / Nuitka
+# -------------------------
+*.manifest
+*.spec
+
+# -------------------------
+# Test / coverage
+# -------------------------
+.coverage
+coverage.xml
+htmlcov/
+pytest_cache/
+
+# -------------------------
+# Editor / IDE folders
+# -------------------------
+.vscode/
+*.code-workspace
+
+# -------------------------
+# OS-level trash
+# -------------------------
+.DS_Store
+Thumbs.db
+
+# -------------------------
+# Your tool’s user config
+# (avoid committing user-specific config!)
+# -------------------------
+*.json
+!.pre-commit-config.yaml     # allow pre-commit config if you add it later
