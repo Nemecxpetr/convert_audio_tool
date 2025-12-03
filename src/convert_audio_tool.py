@@ -1,13 +1,20 @@
 #!/usr/bin/env python
 """
-Batch-convert audio files in a folder using ffmpeg and optionally archive originals.
+Batch-convert media files (audio + simple video containers) in a folder using ffmpeg
+and optionally archive originals.
 
 Requires:
     - ffmpeg installed and available in PATH
 
 Examples:
+    # Audio to WAV
     python convert_audio_tool.py -i input_folder -o output_folder/odpovedi -f wav
+
+    # Audio to MP3, archive originals
     python convert_audio_tool.py -i input_folder -o output_folder -f mp3 --archive archived
+
+    # Video MXF -> MP4
+    python convert_audio_tool.py -i mxf_in -o mp4_out -f mp4
 
 After installing as a console script (see pyproject.toml), you can do:
 
@@ -27,7 +34,20 @@ import shutil
 import subprocess
 import sys
 
-AUDIO_EXTENSIONS = (".wav", ".flac", ".aac", ".ogg", ".mp3", ".mp4", ".m4a")
+# Extensions we will process.
+# Originally audio-only; now includes simple video containers like MXF.
+MEDIA_EXTENSIONS = (
+    ".wav",
+    ".flac",
+    ".aac",
+    ".ogg",
+    ".mp3",
+    ".mp4",
+    ".m4a",
+    ".mxf",  # <--- MXF video container (common broadcast format)
+    ".mov",
+    ".avi",
+)
 
 # Path to a simple JSON config with default folders
 CONFIG_FILE = os.path.join(os.path.expanduser("~"), ".convert_audio_tool.json")
@@ -60,14 +80,20 @@ def save_config(input_folder, output_folder, archive_folder):
     with open(CONFIG_FILE, "w", encoding="utf-8") as f:
         json.dump(cfg, f, indent=2)
     print(f"Saved defaults to {CONFIG_FILE}")
-    
+
 
 def check_ffmpeg():
     if shutil.which("ffmpeg") is None:
         raise EnvironmentError("ffmpeg is not installed or not found in PATH.")
 
 
-def convert_audio(input_file, output_file, overwrite=False, quiet=False):
+def convert_media(input_file, output_file, overwrite=False, quiet=False):
+    """
+    Convert a single media file (audio or video container) using ffmpeg.
+
+    We don't force any codecs here – ffmpeg chooses suitable defaults based on
+    the output container (e.g. .wav, .mp3, .mp4).
+    """
     check_ffmpeg()
 
     # Skip if output exists and we don't want to overwrite
@@ -80,15 +106,27 @@ def convert_audio(input_file, output_file, overwrite=False, quiet=False):
     command = ["ffmpeg", "-y" if overwrite else "-n", "-i", input_file, output_file]
 
     try:
-        subprocess.run(command, check=True, stdout=subprocess.DEVNULL, stderr=subprocess.STDOUT)
+        subprocess.run(
+            command,
+            check=True,
+            stdout=subprocess.DEVNULL,
+            stderr=subprocess.STDOUT,
+        )
         if not quiet:
             print(f"OK  {input_file} -> {output_file}")
     except subprocess.CalledProcessError as e:
         print(f"Error during conversion: {input_file} -> {output_file} ({e})")
 
 
-def convert_folder(input_folder, output_folder, output_ext=".wav", recursive=False,
-                   overwrite=False, quiet=False, archive_folder=None):
+def convert_folder(
+    input_folder,
+    output_folder,
+    output_ext=".wav",
+    recursive=False,
+    overwrite=False,
+    quiet=False,
+    archive_folder=None,
+):
     if not os.path.isdir(input_folder):
         print(f"Input folder does not exist: {input_folder}")
         sys.exit(1)
@@ -114,13 +152,14 @@ def convert_folder(input_folder, output_folder, output_ext=".wav", recursive=Fal
         if not os.path.isfile(path):
             continue
 
-        if not path.lower().endswith(AUDIO_EXTENSIONS):
+        # Process only known extensions (audio + video containers)
+        if not path.lower().endswith(MEDIA_EXTENSIONS):
             continue
 
         rel_name = os.path.splitext(os.path.basename(path))[0]
         out_path = os.path.join(output_folder, rel_name + output_ext)
 
-        convert_audio(path, out_path, overwrite=overwrite, quiet=quiet)
+        convert_media(path, out_path, overwrite=overwrite, quiet=quiet)
         converted_files.append(path)
 
     # Archive originals
@@ -143,28 +182,36 @@ def parse_args(config=None):
     default_archive = config.get("archive", "archived")
 
     parser = argparse.ArgumentParser(
-        description="Convert audio files in a folder using ffmpeg."
+        description=(
+            "Convert media files in a folder using ffmpeg "
+            "(audio + simple video containers like MXF -> MP4)."
+        )
     )
     parser.add_argument(
-        "-i", "--input-folder",
+        "-i",
+        "--input-folder",
         default=default_input,
-        help=f"Input folder with audio files (default: {default_input})",
+        help=f"Input folder with media files (default: {default_input})",
     )
     parser.add_argument(
-        "-o", "--output-folder",
+        "-o",
+        "--output-folder",
         default=default_output,
         help=f"Output folder for converted files (default: {default_output})",
     )
     parser.add_argument(
-        "-f", "--format",
+        "-f",
+        "--format",
         default="wav",
-        help="Output format/extension without dot, e.g. wav, mp3 (default: wav)",
+        help="Output format/extension without dot, e.g. wav, mp3, mp4 (default: wav)",
     )
     parser.add_argument(
         "--archive",
         default=default_archive,
-        help=f"Folder to move originals to after conversion (default: {default_archive}). "
-             "Use --no-archive to disable.",
+        help=(
+            f"Folder to move originals to after conversion (default: {default_archive}). "
+            "Use --no-archive to disable."
+        ),
     )
     parser.add_argument(
         "--no-archive",
@@ -172,9 +219,10 @@ def parse_args(config=None):
         help="Do not move original files to archive.",
     )
     parser.add_argument(
-        "-r", "--recursive",
+        "-r",
+        "--recursive",
         action="store_true",
-        help="Search for audio files recursively in subfolders.",
+        help="Search for media files recursively in subfolders.",
     )
     parser.add_argument(
         "--overwrite",
@@ -182,15 +230,18 @@ def parse_args(config=None):
         help="Overwrite existing output files.",
     )
     parser.add_argument(
-        "-q", "--quiet",
+        "-q",
+        "--quiet",
         action="store_true",
         help="Less verbose output.",
     )
     parser.add_argument(
         "--save-defaults",
         action="store_true",
-        help="Save the current -i/--input-folder, -o/--output-folder and --archive "
-             "values as new defaults for future runs.",
+        help=(
+            "Save the current -i/--input-folder, -o/--output-folder and --archive "
+            "values as new defaults for future runs."
+        ),
     )
     parser.add_argument(
         "--show-defaults",

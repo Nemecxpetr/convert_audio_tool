@@ -149,7 +149,7 @@ Defaults are stored in:
 The tool processes these extensions automatically:
 
 ```
-.wav .flac .aac .ogg .mp3 .mp4 .m4a
+.wav .flac .aac .ogg .mp3 .mp4 .m4a .mxf .mov .avi
 ```
 
 ## Command-line overview
@@ -186,6 +186,12 @@ Convert to MP3, overwrite, quiet mode:
 
 ```
 convert-audio -i samples/input -o out_mp3 -f mp3 --overwrite -q
+```
+
+### Convert MXF video to MP4
+
+```
+convert-audio -i samples/input/video -o samples/output/mp4_out -f mp4
 ```
 
 ## FFmpeg license notice
