@@ -1,140 +1,165 @@
 # convert-audio-tool
 
-A simple and convenient CLI tool for **batch-converting audio files** using `ffmpeg`.
+A simple and convenient CLI tool for **batch-converting audio and video files** using FFmpeg.
 
-It provides an easy interface for converting whole folders of audio, optionally handling recursion,
-archiving originals, overwriting, and saving your default folder configuration for quick reuse.
+It wraps common batch-conversion workflows into a friendly command-line interface with:
 
-This tool does *not* replace FFmpeg — it makes frequent batch workflows much easier.
+- 🔄 Automatic audio/video transcoding  
+- 🎞️ MXF → MP4 support  
+- 📈 Per-file **progress bar** (based on real FFmpeg timestamp output)  
+- 📁 Recursive directory scanning  
+- 📦 Optional archiving of original files  
+- 💾 Persistent default directory configuration  
+- 🧰 Cross-platform support (Windows/macOS/Linux)
 
-## Features
+This tool does *not* replace FFmpeg — it simply makes repetitive folder conversions fast and convenient.
 
-- Convert audio files to a chosen format (WAV, MP3, FLAC…)
-- Optional **recursive** folder traversal
-- Optional **archiving** of original files
-- Optional **overwrite** behavior
-- Works as a standalone script or as an installed CLI command
-- Cross-platform (Windows, macOS, Linux)
-- Supports saving **default input/output/archive** folders
+---
 
-## Requirements
+## ✨ Features
+
+- Convert audio and simple video containers:
+  - `.wav .flac .aac .ogg .mp3 .mp4 .m4a .mxf .mov .avi`
+- Convert whole folders at once
+- Optional:
+  - Recursive search
+  - Archiving of originals
+  - Quiet mode
+  - Overwriting existing files
+  - Saving defaults
+- Live **progress bar** using FFmpeg’s `-progress pipe:1`
+- Easy installation as a CLI command: `convert-audio`
+
+---
+
+## ⚙ Requirements
 
 - Python **3.8+**
-- `ffmpeg` installed and available in your system `PATH`
+- `ffmpeg` **and** `ffprobe` available in your system PATH  
+- Python package `tqdm` (installed automatically via `pyproject.toml`)
 
-Verify FFmpeg installation:
+Verify FFmpeg:
 
-```
+```sh
 ffmpeg -version
+ffprobe -version
 ```
 
-If not installed, download from:  
+If missing, download from:  
 https://ffmpeg.org/
 
-## Installation
+---
 
-### Option 1 — Run directly
+## 📦 Installation
 
-```
+### Option A — Run directly
+
+```sh
 git clone https://github.com/Nemecxpetr/convert_audio_tool.git
 cd convert_audio_tool
 ```
 
-(Optional, recommended)
+(Optional – recommended):
 
-```
+```sh
 python -m venv .venv
 .venv\Scripts\activate      # Windows
-# or: source .venv/bin/activate  # Linux/macOS
+# or: source .venv/bin/activate
 ```
 
 Run:
 
-```
+```sh
 python convert_audio_tool.py -i samples/input -o samples/output
 ```
 
-### Option 2 — Install as CLI (`convert-audio`)
+---
 
-From the project directory:
+### Option B — Install as a CLI command (`convert-audio`)
 
-```
-pip install .
-```
+In the project root:
 
-Or development mode:
-
-```
+```sh
 pip install -e .
 ```
 
-This gives you the command:
+This creates the command:
 
 ```
 convert-audio
 ```
 
-## Usage
+---
+
+## 🚀 Usage
 
 ### Basic conversion (WAV output)
 
-```
+```sh
 convert-audio -i samples/input -o samples/output
 ```
 
 ### Convert to MP3
 
-```
+```sh
 convert-audio -i samples/input -o samples/output -f mp3
 ```
 
-### Archive originals
+### Convert video: MXF → MP4
 
-```
-convert-audio -i samples/input -o samples/output --archive samples/archived
-```
-
-### Disable archiving
-
-```
-convert-audio -i samples/input -o samples/output --no-archive
+```sh
+convert-audio -i samples/input/video -o samples/output/mp4_out -f mp4
 ```
 
-### Recursive folder search
+### Recursive search
 
-```
+```sh
 convert-audio -i samples/input -o samples/output -r
 ```
 
 ### Overwrite existing files
 
-```
+```sh
 convert-audio -i samples/input -o samples/output --overwrite
 ```
 
 ### Quiet mode
 
-```
+```sh
 convert-audio -i samples/input -o samples/output -q
 ```
 
-## Saving default folders
+### Archive originals
 
-Set your preferred defaults once:
-
-```
-convert-audio -i samples/input -o samples/output --archive samples/archived --save-defaults
+```sh
+convert-audio -i samples/input -o samples/output --archive samples/archived
 ```
 
-Next time:
+### Disable archiving
 
+```sh
+convert-audio -i samples/input -o samples/output --no-archive
 ```
+
+---
+
+## 💾 Saving default folders
+
+Save your standard working folders once:
+
+```sh
+convert-audio -i in -o out --archive archived --save-defaults
+```
+
+Next time you can just type:
+
+```sh
 convert-audio
 ```
 
-Show stored defaults:
+Show current defaults:
 
-```
+```sh
 convert-audio --show-defaults
 ```
 
@@ -144,15 +169,19 @@ Defaults are stored in:
 ~/.convert_audio_tool.json
 ```
 
-## Supported audio formats
+---
 
-The tool processes these extensions automatically:
+## 🎚 Supported formats
+
+(from `MEDIA_EXTENSIONS`)
 
 ```
 .wav .flac .aac .ogg .mp3 .mp4 .m4a .mxf .mov .avi
 ```
 
-## Command-line overview
+---
+
+## 🧩 Command-line overview
 
 ```
 convert-audio [-i INPUT] [-o OUTPUT] [-f FORMAT]
@@ -163,51 +192,54 @@ convert-audio [-i INPUT] [-o OUTPUT] [-f FORMAT]
 
 | Option | Description |
 |--------|-------------|
-| `-i`, `--input-folder` | Folder containing audio files |
-| `-o`, `--output-folder` | Folder for converted files |
-| `-f`, `--format` | Output format (`wav`, `mp3`, …) |
-| `--archive FOLDER` | Move original files here |
+| `-i`, `--input-folder` | Folder containing media files |
+| `-o`, `--output-folder` | Where converted files will be stored |
+| `-f`, `--format` | Output format (`wav`, `mp3`, `mp4`, …) |
+| `--archive` | Move original files into this folder |
 | `--no-archive` | Disable archiving |
-| `-r`, `--recursive` | Search subfolders |
+| `-r`, `--recursive` | Convert files in subfolders too |
 | `--overwrite` | Replace existing output files |
-| `-q`, `--quiet` | Minimal console output |
-| `--save-defaults` | Store current folders as defaults |
-| `--show-defaults` | Display saved defaults |
+| `-q`, `--quiet` | Less console output |
+| `--save-defaults` | Save folders for future runs |
+| `--show-defaults` | Show stored defaults and exit |
 
-## Examples
+---
 
-Convert recursively and archive originals:
+## 📊 Progress bar
 
-```
-convert-audio -i samples/input -o samples/output -r --archive samples/archived
-```
-
-Convert to MP3, overwrite, quiet mode:
+The tool automatically shows a live progress bar **per file** if FFmpeg reports duration:
 
 ```
-convert-audio -i samples/input -o out_mp3 -f mp3 --overwrite -q
+myvideo.mxf:  42%|███████████▎              | 25.3/60.0s
 ```
 
-### Convert MXF video to MP4
+If duration can't be detected (rare), conversion still works but without a progress bar.
 
-```
-convert-audio -i samples/input/video -o samples/output/mp4_out -f mp4
-```
+---
 
-## FFmpeg license notice
+## 🧠 Internals
 
-This tool uses **FFmpeg** for audio conversion.
+- Uses `ffprobe` to get media duration  
+- Uses `ffmpeg -progress pipe:1` to receive real-time timestamps  
+- Parses `out_time_ms` or `out_time`  
+- Feeds progress into `tqdm`  
 
-FFmpeg is **not included** and must be installed separately.  
-It is licensed under **GNU LGPL 2.1** or **GNU GPL 2.0**, depending on the build.
+---
 
-More info:  
-https://ffmpeg.org/legal.html
+## ⚖ FFmpeg License Note
 
-`convert-audio-tool` is not affiliated with the FFmpeg project.
+This tool uses **FFmpeg** but does not bundle it.
 
-## License
+FFmpeg is licensed under **GNU LGPL 2.1** or **GNU GPL 2.0**, depending on the build.  
+See: https://ffmpeg.org/legal.html
+
+`convert-audio-tool` is *not affiliated* with FFmpeg.
+
+---
+
+## 📄 License
+
 ```
 MIT License  
-Copyright (c) 2025 Petr Němec
+© 2025 Petr Němec
 ```
