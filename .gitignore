@@ -7,3 +7,4 @@ src/convert_audio_tool.egg-info/top_level.txt
 samples/input/video/Clip0002.MXF
 samples/input/video/Clip0008.MXF
 samples/input/video/Clip0020.MXF
+samples/output/mp4_out/Clip0008.mp4
