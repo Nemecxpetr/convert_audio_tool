@@ -4,7 +4,6 @@ src/convert_audio_tool.egg-info/entry_points.txt
 src/convert_audio_tool.egg-info/PKG-INFO
 src/convert_audio_tool.egg-info/SOURCES.txt
 src/convert_audio_tool.egg-info/top_level.txt
-samples/input/video/Clip0002.MXF
-samples/input/video/Clip0008.MXF
-samples/input/video/Clip0020.MXF
-samples/output/mp4_out/Clip0008.mp4
+samples/input/video/*
+samples/output/mp4_out/*
+samples/output/wav_out/*    
