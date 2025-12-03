@@ -54,6 +54,8 @@ Thumbs.db
 # Big sample / output files
 # -------------------------
 samples/*
+samples/output/*
+
 !samples/.gitkeep
 
 # -------------------------
@@ -62,3 +64,4 @@ samples/*
 # -------------------------
 *.json
 !.pre-commit-config.yaml     # allow pre-commit config if you add it later
+
