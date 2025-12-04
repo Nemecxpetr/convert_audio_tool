@@ -3,6 +3,10 @@ All notable changes to this project will be documented in this file.
 
 The format is inspired by [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
+## [0.2.1] – 2025-12-04
+### Fixed
+- Force H.264 (libx264, yuv420p) + AAC for video outputs (e.g. `.mp4`) to ensure compatibility with DaVinci Resolve and other NLEs.
+
 ## [0.2.0] – 2025-12-04
 ### Added
 - Video support: can now convert simple video containers (e.g. `.mxf`, `.mov`, `.avi`) to other formats such as `.mp4` using the same CLI interface.

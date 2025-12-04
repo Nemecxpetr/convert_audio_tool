@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "convert-audio-tool"
-version = "0.2.0"
+version = "0.2.1"
 description = "Simple CLI tool to batch-convert audio and video using ffmpeg."
 authors = [
     { name = "Petr Němec" }
