@@ -1,5 +1,7 @@
 # convert-audio-tool
 
+[📦 Download the latest release](https://github.com/Nemecxpetr/convert_audio_tool/releases/latest)
+
 A simple and convenient CLI tool for **batch-converting audio and video files** using FFmpeg.
 
 It wraps common batch-conversion workflows into a friendly command-line interface with:
